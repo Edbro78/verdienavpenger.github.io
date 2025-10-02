@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fremtidspenger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <button class="disclaimer-btn" id="disclaimer-btn">Disclaimer</button>
+            <h1>Verdien av penger</h1>
+            <button class="historical-kpi-btn" id="historical-kpi-btn">Historisk KPI</button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Future KPI Section -->
+            <section class="kpi-section">
+                <div class="section-label">FREMTIDIG KPI</div>
+                <div class="kpi-buttons">
+                    <button class="kpi-btn" data-kpi="0">0%</button>
+                    <button class="kpi-btn" data-kpi="2">2%</button>
+                    <button class="kpi-btn" data-kpi="3">3%</button>
+                    <button class="kpi-btn" data-kpi="4">4%</button>
+                    <button class="kpi-btn" data-kpi="5">5%</button>
+                </div>
+            </section>
+
+            <!-- Horizontal Calculations Container -->
+            <div class="calculations-container">
+                <!-- Historical Section -->
+                <section class="historical-section">
+                    <div class="section-label">HISTORISK BEREGNING</div>
+                    <div class="slider-container">
+                        <label for="historical-year-slider">Velg år (2010-2024):</label>
+                        <input type="range" id="historical-year-slider" min="2010" max="2024" value="2024" class="year-slider">
+                        <span id="historical-year-display">2025</span>
+                    </div>
+                    <div class="value-box historical-value">
+                        <div class="value-label">Verdi av pengene i fortiden</div>
+                        <div class="value-amount" id="historical-amount">1 000 000,-</div>
+                    </div>
+                </section>
+
+                <!-- Present Section -->
+                <section class="present-section">
+                    <div class="section-label">DAGENS BELØP</div>
+                    <div class="slider-container">
+                        <label for="amount-slider">Dagens kronebeløp:</label>
+                        <input type="range" id="amount-slider" min="100000" max="5000000" value="1000000" step="100000" class="amount-slider">
+                        <span id="amount-display">2025</span>
+                    </div>
+                    <div class="value-box present-value">
+                        <div class="value-label">Dagens kronebeløp</div>
+                        <div class="value-amount" id="present-amount">1 000 000,-</div>
+                    </div>
+                </section>
+
+                <!-- Future Section -->
+                <section class="future-section">
+                    <div class="section-label">FREMTIDIG BEREGNING</div>
+                    <div class="slider-container">
+                        <label for="future-year-slider">Velg år (2025-2045):</label>
+                        <input type="range" id="future-year-slider" min="2025" max="2045" value="2030" class="year-slider">
+                        <span id="future-year-display">2030</span>
+                    </div>
+                    <div class="value-box future-value">
+                        <div class="value-label">Fremtidig verdi av pengene</div>
+                        <div class="value-amount" id="future-amount">1 000 000,-</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Historical KPI Modal -->
+    <div class="modal-overlay" id="historical-kpi-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Historisk KPI-utvikling</h2>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="kpi-table-container">
+                    <table class="kpi-table">
+                        <thead>
+                            <tr>
+                                <th>År</th>
+                                <th>Årlig KPI-vekst (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kpi-table-body">
+                            <!-- Table content will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer Modal -->
+    <div class="modal-overlay" id="disclaimer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Disclaimer</h2>
+                <button class="close-btn" id="close-disclaimer-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="disclaimer-text">
+                    <p>Resultatet av de beregninger som gjøres i kalkulatoren vil variere ut ifra hvilke tall som legges til grunn. Tallene som legges til grunn bestemmes i samtale mellom rådgiver og deltaker i møtet. Resultatet vil dermed kunne variere fra de tallene som fremkommer offisielle dokumenter i tilknytning til ytelse av investeringsrådgivning.</p>
+                    
+                    <p>Beregningene i kalkulatoren må ansees som statiske og er kun ment for illustrasjonsformål. For konkrete fremstillinger, vises det til offisielle dokumenter knyttet til rådgivningen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
