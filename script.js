@@ -19,8 +19,8 @@ const kpiData = {
 
 // Global variables
 let currentAmount = 1000000;
-let selectedHistoricalYear = 2024;
-let selectedFutureYear = 2030;
+let selectedHistoricalYear = 2025;
+let selectedFutureYear = 2025;
 let selectedKPI = 3;
 
 // DOM elements
@@ -58,7 +58,7 @@ function initializeSliders() {
     if (historicalYearSlider) {
         historicalYearSlider.addEventListener('input', function() {
             selectedHistoricalYear = parseInt(this.value);
-            // Don't update the display - keep it at 2025
+            updateHistoricalYearDisplay();
             updateAllCalculations();
         });
     }
@@ -102,15 +102,14 @@ function initializeKPIButtons() {
 // Update amount display
 function updateAmountDisplay() {
     const formattedAmount = formatNumber(currentAmount);
-    // Keep amount display at 2025 - never change it
+    // Show current year (2025) as reference
     amountDisplay.textContent = '2025';
     presentAmount.textContent = formattedAmount + ',-';
 }
 
 // Update historical year display
 function updateHistoricalYearDisplay() {
-    // Always show 2025 - never change this
-    historicalYearDisplay.textContent = 2025;
+    historicalYearDisplay.textContent = selectedHistoricalYear;
 }
 
 // Update future year display
@@ -120,7 +119,7 @@ function updateFutureYearDisplay() {
 
 // Calculate historical value (inflation adjustment)
 function calculateHistoricalValue() {
-    // Always use 2025 as the reference year
+    // Use 2025 as the reference year
     const referenceYear = 2025;
     
     if (selectedHistoricalYear === referenceYear) {
