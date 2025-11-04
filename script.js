@@ -38,6 +38,7 @@ const futureAmount = document.getElementById('future-amount');
 
 // Initialize the dashboard
 document.addEventListener('DOMContentLoaded', function() {
+    initializeTheme();
     initializeSliders();
     initializeKPIButtons();
     initializeHistoricalKPIModal();
@@ -45,29 +46,80 @@ document.addEventListener('DOMContentLoaded', function() {
     updateAllCalculations();
 });
 
+// Initialize theme toggle
+function initializeTheme() {
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const html = document.documentElement;
+    
+    // Check for saved theme preference or default to light mode
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        html.classList.add('dark');
+    }
+    
+    // Theme toggle handler
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', function() {
+            html.classList.toggle('dark');
+            
+            // Save preference
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
+}
+
+// Update slider progress fill
+function updateSliderProgress(slider, min, max) {
+    const value = parseInt(slider.value);
+    const percentage = ((value - min) / (max - min)) * 100;
+    // Use CSS custom properties - browsers will handle OKLCH conversion
+    const root = getComputedStyle(document.documentElement);
+    const primaryColor = root.getPropertyValue('--primary').trim();
+    const borderColor = root.getPropertyValue('--border').trim();
+    slider.style.background = `linear-gradient(to right, ${primaryColor} 0%, ${primaryColor} ${percentage}%, ${borderColor} ${percentage}%, ${borderColor} 100%)`;
+}
+
 // Initialize sliders
 function initializeSliders() {
     if (amountSlider) {
+        const min = parseInt(amountSlider.min);
+        const max = parseInt(amountSlider.max);
+        updateSliderProgress(amountSlider, min, max);
+        
         amountSlider.addEventListener('input', function() {
             currentAmount = parseInt(this.value);
             updateAmountDisplay();
             updateAllCalculations();
+            updateSliderProgress(this, min, max);
         });
     }
 
     if (historicalYearSlider) {
+        const min = parseInt(historicalYearSlider.min);
+        const max = parseInt(historicalYearSlider.max);
+        updateSliderProgress(historicalYearSlider, min, max);
+        
         historicalYearSlider.addEventListener('input', function() {
             selectedHistoricalYear = parseInt(this.value);
             updateHistoricalYearDisplay();
             updateAllCalculations();
+            updateSliderProgress(this, min, max);
         });
     }
 
     if (futureYearSlider) {
+        const min = parseInt(futureYearSlider.min);
+        const max = parseInt(futureYearSlider.max);
+        updateSliderProgress(futureYearSlider, min, max);
+        
         futureYearSlider.addEventListener('input', function() {
             selectedFutureYear = parseInt(this.value);
             updateFutureYearDisplay();
             updateAllCalculations();
+            updateSliderProgress(this, min, max);
         });
     }
 }
