@@ -1,6 +1,6 @@
-// --- Supabase (fyll inn dine verdier) ---
-const SUPABASE_URL = 'DIN_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'DIN_SUPABASE_ANON_KEY';
+// --- Supabase ---
+const SUPABASE_URL = 'https://qlowvgthfootuvwxbysx.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_eHFZ_3e5VETF0fKS6yUgYw_F92QXpX7';
 
 let supabaseClient = null;
 try {
