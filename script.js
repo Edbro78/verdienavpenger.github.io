@@ -11,14 +11,6 @@ try {
     console.warn('Supabase-klient kunne ikke opprettes:', err);
 }
 
-// Midlertidig lokal innlogging (byttes til Supabase Auth senere)
-const LOKAL_AUTH = {
-    brukernavn: 'admin',
-    passord: '123',
-    sessionKey: 'verdien_av_penger_innlogget',
-    userId: '00000000-0000-0000-0000-000000000001'
-};
-
 // KPI data for historical calculations
 const kpiData = {
     2010: 2.4,
@@ -422,75 +414,58 @@ function visLoginFeil(melding) {
     }
 }
 
-function erLokalInnlogget() {
+function fjernGammelLokalInnlogging() {
     try {
-        return sessionStorage.getItem(LOKAL_AUTH.sessionKey) === '1'
-            || localStorage.getItem(LOKAL_AUTH.sessionKey) === '1';
-    } catch (_err) {
-        return false;
+        sessionStorage.removeItem('verdien_av_penger_innlogget');
+        localStorage.removeItem('verdien_av_penger_innlogget');
+    } catch (_err) { /* ignore */ }
+}
+
+function oversettAuthFeil(message) {
+    if (!message) return 'Innlogging feilet. Sjekk e-post og passord.';
+    if (message.includes('Invalid login credentials')) {
+        return 'Feil e-post eller passord.';
     }
-}
-
-function markerLokalInnlogget() {
-    try {
-        sessionStorage.setItem(LOKAL_AUTH.sessionKey, '1');
-    } catch (_err) { /* sessionStorage utilgjengelig */ }
-    try {
-        localStorage.setItem(LOKAL_AUTH.sessionKey, '1');
-    } catch (_err) { /* localStorage utilgjengelig */ }
-}
-
-function fjernLokalInnlogging() {
-    try {
-        sessionStorage.removeItem(LOKAL_AUTH.sessionKey);
-    } catch (_err) { /* ignore */ }
-    try {
-        localStorage.removeItem(LOKAL_AUTH.sessionKey);
-    } catch (_err) { /* ignore */ }
-}
-
-function erGyldigLokalInnlogging(brukernavn, passord) {
-    const navn = (brukernavn || '').trim().toLowerCase();
-    const pwd = (passord || '').trim();
-    return navn === LOKAL_AUTH.brukernavn && pwd === LOKAL_AUTH.passord;
+    if (message.includes('Email not confirmed')) {
+        return 'Bekreft e-posten din i Supabase, eller slå av «Confirm email» under Authentication.';
+    }
+    return message;
 }
 
 async function hentAktivBrukerId() {
-    if (erLokalInnlogget()) {
-        return LOKAL_AUTH.userId;
-    }
     if (!supabaseClient) return null;
     const { data: { user } } = await supabaseClient.auth.getUser();
     return user ? user.id : null;
 }
 
-async function loggInn(brukernavn, passord) {
-    if (erGyldigLokalInnlogging(brukernavn, passord)) {
-        markerLokalInnlogget();
-        visDashboard();
-        return { lokal: true };
+async function loggInn(epost, passord) {
+    if (!supabaseClient) {
+        throw new Error('Supabase er ikke tilgjengelig. Last siden på nytt.');
     }
-    throw new Error('Feil brukernavn eller passord.');
+    fjernGammelLokalInnlogging();
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: epost.trim(),
+        password: passord
+    });
+    if (error) throw new Error(oversettAuthFeil(error.message));
+    visDashboard();
+    return data;
 }
 
 async function loggUt() {
-    fjernLokalInnlogging();
+    fjernGammelLokalInnlogging();
     if (supabaseClient) {
-        try {
-            await supabaseClient.auth.signOut();
-        } catch (_err) {
-            // Ignorer hvis Supabase Auth ikke er i bruk
-        }
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) throw error;
     }
     skjulDashboard();
     lukkModellListe();
 }
 
 async function sjekkBrukerStatus() {
-    if (erLokalInnlogget()) {
-        visDashboard();
-        return { lokal: true };
-    }
+    fjernGammelLokalInnlogging();
+
     if (!supabaseClient) {
         skjulDashboard();
         return null;
@@ -691,25 +666,35 @@ function initializeSupabaseAuth() {
 
     sjekkBrukerStatus();
 
+    if (supabaseClient) {
+        supabaseClient.auth.onAuthStateChange((_event, session) => {
+            if (session) {
+                visDashboard();
+            } else {
+                skjulDashboard();
+            }
+        });
+    }
+
     if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             visLoginFeil('');
-            const brukernavnFelt = loginForm.querySelector('#login-brukernavn')
-                || loginForm.elements.brukernavn;
+            const epostFelt = loginForm.querySelector('#login-epost')
+                || loginForm.elements.epost;
             const passordFelt = loginForm.querySelector('#login-password')
                 || loginForm.elements.password;
-            const brukernavn = brukernavnFelt ? brukernavnFelt.value : '';
+            const epost = epostFelt ? epostFelt.value : '';
             const passord = passordFelt ? passordFelt.value : '';
             const submitBtn = document.getElementById('login-submit-btn');
             if (submitBtn) submitBtn.disabled = true;
 
             try {
-                await loggInn(brukernavn, passord);
+                await loggInn(epost, passord);
                 visLoginFeil('');
                 loginForm.reset();
             } catch (err) {
-                visLoginFeil(err.message || 'Innlogging feilet. Sjekk brukernavn og passord.');
+                visLoginFeil(err.message || 'Innlogging feilet. Sjekk e-post og passord.');
             } finally {
                 if (submitBtn) submitBtn.disabled = false;
             }
