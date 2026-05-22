@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fremtidspenger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Innloggingsskjerm -->
+    <div class="auth-overlay" id="auth-overlay">
+        <div class="auth-card">
+            <div class="auth-brand">
+                <h2>Verdien av penger</h2>
+                <p class="auth-subtitle">Rådgiverinnlogging</p>
+            </div>
+            <form class="auth-form" id="login-form" autocomplete="off">
+                <div class="auth-field">
+                    <label for="login-brukernavn">Brukernavn</label>
+                    <input type="text" id="login-brukernavn" name="brukernavn" placeholder="admin" required autocomplete="username">
+                </div>
+                <div class="auth-field">
+                    <label for="login-password">Passord</label>
+                    <input type="password" id="login-password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <p class="auth-error" id="login-error" role="alert" hidden></p>
+                <button type="submit" class="auth-submit-btn" id="login-submit-btn">Logg inn</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="dashboard-container app-hidden" id="app-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <button class="disclaimer-btn" id="disclaimer-btn">Disclaimer</button>
+            <h1>Verdien av penger</h1>
+            <div class="header-right">
+                <div class="model-actions">
+                    <button class="model-btn lagre-modell-btn" id="lagre-modell-btn" type="button">Lagre modell</button>
+                    <div class="load-model-wrapper">
+                        <button class="model-btn last-inn-modell-btn" id="last-inn-modell-btn" type="button" aria-haspopup="true" aria-expanded="false">Last inn modell</button>
+                        <div class="modell-liste" id="modell-liste" role="menu" hidden>
+                            <p class="modell-liste-empty" id="modell-liste-empty">Ingen lagrede modeller</p>
+                            <ul class="modell-liste-items" id="modell-liste-items"></ul>
+                        </div>
+                    </div>
+                </div>
+                <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle dark mode">
+                    <svg class="theme-icon sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="theme-icon moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+                <button class="historical-kpi-btn" id="historical-kpi-btn">Historisk KPI</button>
+            </div>
+        </header>
+
+        <button class="logg-ut-btn" id="logg-ut-btn" type="button">Logg ut</button>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Future KPI Section -->
+            <section class="kpi-section">
+                <div class="section-label">FREMTIDIG KPI</div>
+                <div class="kpi-buttons">
+                    <button class="kpi-btn" data-kpi="0">0%</button>
+                    <button class="kpi-btn" data-kpi="2">2%</button>
+                    <button class="kpi-btn" data-kpi="3">3%</button>
+                    <button class="kpi-btn" data-kpi="4">4%</button>
+                    <button class="kpi-btn" data-kpi="5">5%</button>
+                </div>
+            </section>
+
+            <!-- Horizontal Calculations Container -->
+            <div class="calculations-container">
+                <!-- Historical Section -->
+                <section class="historical-section">
+                    <div class="section-label">HISTORISK BEREGNING</div>
+                    <div class="slider-container">
+                        <label for="historical-year-slider">Velg år (2010-2025):</label>
+                        <input type="range" id="historical-year-slider" min="2010" max="2025" value="2025" class="year-slider">
+                        <span id="historical-year-display">2025</span>
+                    </div>
+                    <div class="value-box historical-value">
+                        <div class="value-label">Verdi av pengene i fortiden</div>
+                        <div class="value-amount" id="historical-amount">1 000 000,-</div>
+                    </div>
+                </section>
+
+                <!-- Present Section -->
+                <section class="present-section">
+                    <div class="section-label">DAGENS BELØP</div>
+                    <div class="slider-container">
+                        <label for="amount-slider">Dagens kronebeløp:</label>
+                        <input type="range" id="amount-slider" min="100000" max="5000000" value="1000000" step="100000" class="amount-slider">
+                        <span id="amount-display">2025</span>
+                    </div>
+                    <div class="value-box present-value">
+                        <div class="value-label">Dagens kronebeløp</div>
+                        <div class="value-amount" id="present-amount">1 000 000,-</div>
+                    </div>
+                </section>
+
+                <!-- Future Section -->
+                <section class="future-section">
+                    <div class="section-label">FREMTIDIG BEREGNING</div>
+                    <div class="slider-container">
+                        <label for="future-year-slider">Velg år (2025-2045):</label>
+                        <input type="range" id="future-year-slider" min="2025" max="2045" value="2025" class="year-slider">
+                        <span id="future-year-display">2025</span>
+                    </div>
+                    <div class="value-box future-value">
+                        <div class="value-label">Fremtidig verdi av pengene</div>
+                        <div class="value-amount" id="future-amount">1 000 000,-</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Lagre modell-modal -->
+    <div class="modal-overlay" id="lagre-modell-modal">
+        <div class="modal-content modal-content--compact">
+            <div class="modal-header">
+                <h2>Lagre modell</h2>
+                <button class="close-btn" id="close-lagre-modell-modal" type="button" aria-label="Lukk">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="lagre-modell-form" id="lagre-modell-form">
+                    <div class="auth-field">
+                        <label for="kunde-navn-input">Kundenavn</label>
+                        <input type="text" id="kunde-navn-input" name="kundeNavn" placeholder="F.eks. Ola Nordmann" required maxlength="120">
+                    </div>
+                    <p class="modell-status" id="lagre-modell-status" role="status" hidden></p>
+                    <div class="modal-form-actions">
+                        <button type="button" class="model-btn model-btn--secondary" id="avbryt-lagre-modell">Avbryt</button>
+                        <button type="submit" class="model-btn model-btn--primary" id="bekreft-lagre-modell">Lagre</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historical KPI Modal -->
+    <div class="modal-overlay" id="historical-kpi-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Historisk KPI-utvikling</h2>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="kpi-table-container">
+                    <table class="kpi-table">
+                        <thead>
+                            <tr>
+                                <th>År</th>
+                                <th>Årlig KPI-vekst (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kpi-table-body">
+                            <!-- Table content will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer Modal -->
+    <div class="modal-overlay" id="disclaimer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Disclaimer</h2>
+                <button class="close-btn" id="close-disclaimer-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="disclaimer-text">
+                    <p>Resultatet av de beregninger som gjøres i kalkulatoren vil variere ut ifra hvilke tall som legges til grunn. Tallene som legges til grunn bestemmes i samtale mellom rådgiver og deltaker i møtet. Resultatet vil dermed kunne variere fra de tallene som fremkommer offisielle dokumenter i tilknytning til ytelse av investeringsrådgivning.</p>
+                    
+                    <p>Beregningene i kalkulatoren må ansees som statiske og er kun ment for illustrasjonsformål. For konkrete fremstillinger, vises det til offisielle dokumenter knyttet til rådgivningen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
